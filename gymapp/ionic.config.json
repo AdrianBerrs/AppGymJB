@@ -1,7 +1,0 @@
-{
-  "name": "gymapp",
-  "integrations": {
-    "cordova": {}
-  },
-  "type": "angular-standalone"
-}
