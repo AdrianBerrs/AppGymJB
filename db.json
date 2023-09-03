@@ -1,0 +1,58 @@
+{
+  "posts": [
+    {
+      "data": "2023-09-03",
+      "idade": 27,
+      "peso": 128,
+      "altura": 172,
+      "gordura": 40,
+      "pesoGordura": 40,
+      "massaMagra": 45,
+      "pesoMassaMagra": 68,
+      "massaMuscular": 30,
+      "pesoMassaMuscular": 50,
+      "agua": 20,
+      "teorAgua": 24,
+      "gorduraV": 17,
+      "pesoOssos": 4,
+      "metabolismo": 2300,
+      "proteina": 17,
+      "obesidade": 3,
+      "idadeCorpo": 31,
+      "lbm": 10,
+      "id": 1
+    },
+    {
+      "data": "2023-09-03",
+      "idade": 27,
+      "peso": 125,
+      "altura": 1.73,
+      "gordura": 39,
+      "pesoGordura": 28,
+      "massaMagra": 20,
+      "pesoMassaMagra": 12,
+      "massaMuscular": 23,
+      "pesoMassaMuscular": 19,
+      "agua": 31,
+      "teorAgua": 12,
+      "gorduraV": 44,
+      "pesoOssos": 5,
+      "metabolismo": 2200,
+      "proteina": 18,
+      "obesidade": 2,
+      "idadeCorpo": 28,
+      "lbm": 10,
+      "id": 2
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "body": "some comment",
+      "postId": 1
+    }
+  ],
+  "profile": {
+    "name": "typicode"
+  }
+}
