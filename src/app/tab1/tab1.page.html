@@ -1,8 +1,6 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-       Treino
-    </ion-title>
+    <ion-title>Treino</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -12,7 +10,22 @@
       <ion-title size="large">Treino</ion-title>
     </ion-toolbar>
   </ion-header>
-  <ion-item>
-    <ion-toggle>Vou organizar ainda :P</ion-toggle>
-  </ion-item>
+
+  <!-- Botão para cadastrar sessão de treino -->
+  <ion-button (click)="openSessionModal()">Cadastrar Sessão de Treino</ion-button>
+
+  <!-- Lista de sessões e exercícios -->
+  <ion-list>
+    <ion-item *ngFor="let session of sessions">
+      <ion-label>{{ session.name }}</ion-label>
+      <ion-toggle [checked]="session.completed" (ionChange)="markSessionComplete(session)"></ion-toggle>
+
+      <!-- Lista de exercícios para esta sessão -->
+      <ion-list *ngIf="session.exercises && session.exercises.length > 0">
+        <ion-item *ngFor="let exercise of session.exercises">
+          {{ exercise.name }}
+        </ion-item>
+      </ion-list>
+    </ion-item>
+  </ion-list>
 </ion-content>
