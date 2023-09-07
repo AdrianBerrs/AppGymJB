@@ -1,19 +1,26 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
+  <ion-toolbar color="primary">
+    <ion-icon name="bicycle-outline"></ion-icon>
     <ion-title>Treino</ion-title>
-  </ion-toolbar>
+    <ion-icon name="barbell-outline"></ion-icon>
+    
+  </ion-toolbar >
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
-    <ion-toolbar>
+    <ion-toolbar color="primary">
       <ion-title size="large">Treino</ion-title>
+     
+
     </ion-toolbar>
   </ion-header>
 
   <!-- Botão para cadastrar sessão de treino -->
-  <ion-button (click)="openSessionModal()">Cadastrar Sessão de Treino</ion-button>
-
+  
+  <ion-toolbar color="primary"><ion-button (click)="openSessionModal()">Cadastrar Sessão de Treino </ion-button>
+    
+ </ion-toolbar>
   <!-- Lista de sessões e exercícios -->
   <ion-list>
     <ion-item *ngFor="let session of sessions">
@@ -21,6 +28,7 @@
       <ion-toggle [checked]="session.completed" (ionChange)="markSessionComplete(session)"></ion-toggle>
 
       <!-- Lista de exercícios para esta sessão -->
+      
       <ion-list *ngIf="session.exercises && session.exercises.length > 0">
         <ion-item *ngFor="let exercise of session.exercises">
           {{ exercise.name }}
@@ -29,3 +37,4 @@
     </ion-item>
   </ion-list>
 </ion-content>
+

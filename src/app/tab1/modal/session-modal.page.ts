@@ -25,6 +25,11 @@ export class SessionModalPage {
     this.modalCtrl.dismiss();
   }
 
+  
+  
+
+
+
   addExercise() {
     if (this.newExerciseName.trim() !== '') {
       this.exercises.push({ name: this.newExerciseName });
