@@ -19,10 +19,14 @@ import { IonicStorageModule, Storage } from '@ionic/storage-angular';
 })
 
 export class Tab1Page {
-  sessions: { name: string; completed: boolean; exercises: { name: string }[] }[] = [];
+  sessions: { name: string; completed: boolean; expanded: boolean; exercises: { name: string; completed: boolean }[] }[] = [];
 
   constructor(private modalCtrl: ModalController, private storage: Storage) {
     this.initStorage();
+  }
+
+  async ionViewDidEnter() {
+    await this.loadSessionsFromStorage();
   }
 
   async initStorage() {
@@ -37,7 +41,69 @@ export class Tab1Page {
 
     modal.onDidDismiss().then((data) => {
       if (data.data) {
-        this.sessions.push({ name: data.data.name, completed: false, exercises: data.data.exercises });
+        const newSession = { name: data.data.name, completed: false, expanded: false, exercises: data.data.exercises };
+        this.sessions.push(newSession);
+        this.saveSessionToStorage(data.data.name, data.data.exercises);
+      }
+
+      this.loadSessionsFromStorage();
+    });
+
+    return await modal.present();
+  }
+
+  async loadSessionsFromStorage() {
+    this.sessions = [];
+    const keys = await this.storage.keys();
+
+    for (const key of keys) {
+      await this.loadSessionFromStorage(key);
+    }
+  }
+
+  async loadSessionFromStorage(sessionName: string) {
+    const data = await this.storage.get(sessionName);
+
+    if (data) {
+      this.sessions.push({
+        name: sessionName,
+        completed: false,
+        expanded: false,
+        exercises: data.exercises,
+      });
+    }
+  }
+
+  async saveSessionToStorage(sessionName: string, exercises: { name: string; completed: boolean }[]) {
+    const exerciseData = {
+      exercises: exercises,
+    };
+
+    await this.storage.set(sessionName, exerciseData);
+  }
+
+  expandSession(session: { expanded: boolean }) {
+    session.expanded = !session.expanded;
+  }
+
+  markExerciseComplete(exercise: { completed: boolean }) {
+    exercise.completed = !exercise.completed;
+    this.saveSessionsToStorage();
+  }
+
+  async editSession(session: { name: string; exercises: { name: string; completed: boolean }[] }) {
+    const modal = await this.modalCtrl.create({
+      component: SessionModalPage,
+      componentProps: {
+        sessionName: session.name,
+        exercises: session.exercises,
+      },
+    });
+
+    modal.onDidDismiss().then(async (data) => {
+      if (data.data) {
+        session.name = data.data.name;
+        session.exercises = data.data.exercises;
         this.saveSessionToStorage(data.data.name, data.data.exercises);
       }
     });
@@ -45,35 +111,17 @@ export class Tab1Page {
     return await modal.present();
   }
 
-  loadSessionsFromStorage() {
-    this.sessions = [];
-    this.storage.keys().then(keys => {
-      keys.forEach(key => {
-        this.loadSessionFromStorage(key);
-      });
-    });
+  async removeSession(session: { name: string; completed: boolean; expanded: boolean; exercises: { name: string; completed: boolean; }[] }) {
+    const index = this.sessions.indexOf(session);
+    if (index !== -1) {
+      this.sessions.splice(index, 1);
+      await this.storage.remove(session.name);
+    }
   }
 
-  loadSessionFromStorage(sessionName: string) {
-    this.storage.get(sessionName).then((data) => {
-      if (data) {
-        this.sessions.push({
-          name: sessionName,
-          completed: false,
-          exercises: data.exercises
-        });
-      }
-    });
-  }
-
-  saveSessionToStorage(sessionName: string, exercises: { name: string }[]) {
-    const exerciseData = {
-      exercises: exercises
-    };
-    this.storage.set(sessionName, exerciseData);
-  }
-
-  markSessionComplete(session: { name: string; completed: boolean }) {
-    session.completed = !session.completed;
+  async saveSessionsToStorage() {
+    for (const session of this.sessions) {
+      await this.saveSessionToStorage(session.name, session.exercises);
+    }
   }
 }
