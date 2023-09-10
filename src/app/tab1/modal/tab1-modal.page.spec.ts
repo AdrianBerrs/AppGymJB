@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule, ModalController } from '@ionic/angular';
-import { SessionModalPage } from './session-modal.page';
+import { SessionModalPage } from './tab1-modal.page';
 
 describe('SessionModalPage', () => {
   let component: SessionModalPage;

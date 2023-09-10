@@ -3,7 +3,6 @@ import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 
-
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -11,8 +10,8 @@ import { HttpClientModule } from '@angular/common/http';
   standalone: true,
   imports: [IonicModule, CommonModule,HttpClientModule],
 })
+
 export class AppComponent {
   public environmentInjector = inject(EnvironmentInjector);
-
 
 }
