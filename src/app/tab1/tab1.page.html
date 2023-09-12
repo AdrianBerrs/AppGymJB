@@ -1,8 +1,6 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="primary">
-    <ion-icon name="bicycle-outline"></ion-icon>
     <ion-title>Meu Treino</ion-title>
-    <ion-icon name="barbell-outline"></ion-icon>
   </ion-toolbar>
 </ion-header>
 
@@ -11,24 +9,31 @@
 
   <!-- Lista de sessões -->
   <ion-list>
-    <ion-item *ngFor="let session of sessions">
-      <ion-label (click)="expandSession(session)">
+    <ion-card *ngFor="let session of sessions">
+      <ion-card-header (click)="expandSession(session)">
         <ion-icon name="caret-forward" *ngIf="!session.expanded"></ion-icon>
         <ion-icon name="caret-down" *ngIf="session.expanded"></ion-icon>
         {{ session.name }}
-      </ion-label>
-      
+      </ion-card-header>
+    
+      <!-- Adicionar botões de edição e exclusão à direita -->
+      <ion-button *ngIf= "!session.expanded" fill="clear" color="primary" class="edit-button" (click)="editSession(session)">
+        <ion-icon  name="create"></ion-icon>
+      </ion-button>
+      <ion-button *ngIf= "!session.expanded" fill="clear" color="danger" class="delete-button" (click)="removeSession(session)">
+        <ion-icon name="trash"></ion-icon>
+      </ion-button>
+    
       <!-- Lista de exercícios para esta sessão (expansível) -->
-      <ion-list *ngIf="session.expanded">
-        <ion-item *ngFor="let exercise of session.exercises; let i = index">
-          <ion-label>{{ exercise.name }}</ion-label>
-          <ion-checkbox [(ngModel)]="exercise.completed" (ionChange)="markExerciseComplete(exercise)"></ion-checkbox>
-        </ion-item>
-      </ion-list>
-      
-      <ion-icon name="create" slot="end" (click)="editSession(session)"></ion-icon>
-      <ion-icon name="trash" slot="end" (click)="removeSession(session)"></ion-icon>
-    </ion-item>
+      <ion-card-content *ngIf="session.expanded">
+        <ion-list>
+          <ion-item *ngFor="let exercise of session.exercises; let i = index">
+            <ion-label>{{ exercise.name }}</ion-label>
+            <ion-toggle [(ngModel)]="exercise.checked" (ionChange)="markExerciseComplete(exercise)"></ion-toggle>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card> 
   </ion-list>
 </ion-content>
 

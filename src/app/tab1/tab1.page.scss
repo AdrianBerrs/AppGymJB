@@ -1,0 +1,22 @@
+.caret-forward {
+    font-size: 20px;
+}
+
+.caret-down {
+    font-size: 20px;
+}
+
+.session-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.exercise-list {
+    padding-left: 16px;
+}
+
+.edit-button,
+.delete-button {
+    float: left;
+}

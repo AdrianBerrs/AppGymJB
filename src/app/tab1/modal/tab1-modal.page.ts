@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Injectable } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
@@ -19,7 +19,7 @@ import { Storage } from '@ionic/storage-angular';
 
 export class SessionModalPage {
   sessionName: string = '';
-  exercises: { name: string }[] = [];
+  exercises: { name: string, checked: boolean }[] = [];
   newExerciseName: string = '';
   isNewExerciseNameEmpty: boolean = true;
   isModalEmpty: boolean = true;
@@ -46,7 +46,7 @@ export class SessionModalPage {
 
   addExercise() {
     if (this.newExerciseName.trim() !== '') {
-      this.exercises.push({ name: this.newExerciseName });
+      this.exercises.push({ name: this.newExerciseName, checked: false });
       this.newExerciseName = '';
       this.isModalEmpty = false;
     }
@@ -70,7 +70,7 @@ export class SessionModalPage {
     if (this.sessionName.trim() !== '' && this.exercises.length > 0) {
       this.storage.set(this.sessionName, { exercises: this.exercises });
     }
-    //a
+    
     this.closeModal();
   }
 }
