@@ -28,7 +28,7 @@ ion-label{
   }
 
   .label2{
-    top: 50%;
+    top: 60%;
     left: 50%;
     transform: translate(-50%, -50%);
   }
@@ -42,20 +42,17 @@ ion-label{
 
   ion-content{
     --background: rgba(1, 1, 1, 0.8);
-    
-    body {
-      background: url(../../assets/img/bgsplash.jpg) no-repeat center/cover fixed;
-    }
+    background: url(../../assets/img/bgsplash.jpg) no-repeat center/cover fixed;
   }
  
   img {
     position: absolute;
-    height: 200px;
-    width: 200px;
+    height: 250px;
+    width: 250px;
     margin: 0 auto;
     border-radius: 50%;
 
-    top: 25%;
+    top: 32%;
     left: 50%;
     transform: translate(-50%, -50%);
   }

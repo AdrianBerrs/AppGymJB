@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 
 @Component({
@@ -10,10 +10,5 @@ import { IonicModule } from '@ionic/angular';
     IonicModule,
   ],
 })
-export class Splashpage  implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {}
-
+export class Splashpage {  
 }
