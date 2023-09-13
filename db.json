@@ -1,4 +1,47 @@
 {
+  "workouts": [
+    {
+      "date": "2023-09-03",
+      "exercises": [
+        {
+          "name": "Exercicio 1",
+          "done": true
+        },
+        {
+          "name": "Exercicio 2",
+          "done": false
+        },
+        {
+          "name": "Exercicio 3",
+          "done": false
+        },
+        {
+          "name": "Exercicio 4",
+          "done": false
+        }
+
+      ]
+    },
+    {
+      "date": "2023-09-04",
+      "exercises": [
+        {
+          "name": "Exercicio 4",
+          "done": false
+        }
+
+      ]
+    },
+    {
+      "date": "2023-09-07",
+      "exercises": [
+        {
+          "name": "Exercicio 1",
+          "done": true
+        }
+      ]
+    }
+  ],
   "posts": [
     {
       "data": "2023-09-03",

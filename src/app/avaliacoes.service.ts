@@ -33,5 +33,11 @@ export class AvaliacoesService {
       return res;
     }))
   }
+  getWorkouts(){
+    return this.http.get<any>("http://localhost:3000/workouts")
+    .pipe(map((res:any)=>{
+      return res;
+    }))
+  } 
   
 }
