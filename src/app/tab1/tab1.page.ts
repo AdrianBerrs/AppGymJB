@@ -3,7 +3,8 @@ import { AlertController, IonicModule, ModalController } from '@ionic/angular';
 import { SessionModalPage } from './modal/tab1-modal.page';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Storage } from '@ionic/storage-angular';
+import { StorageService } from '../storage.service';
+import { Exercise } from './types';
 
 @Component({
   selector: 'app-tab1',
@@ -15,14 +16,13 @@ import { Storage } from '@ionic/storage-angular';
     IonicModule,
     FormsModule,
   ],
-  providers: [Storage]
 })
 
 export class Tab1Page {
-  sessions: { name: string; expanded: boolean; exercises: { name: string; checked: boolean }[] }[] = [];
+  sessions: { date: Date, name: string; expanded: boolean; exercises: Exercise[] }[] = [];
   
 
-  constructor(private modalCtrl: ModalController, private storage: Storage, private alertController: AlertController) {
+  constructor(private modalCtrl: ModalController, private storage: StorageService, private alertController: AlertController) {
     this.initStorage();
   }
 
@@ -31,7 +31,7 @@ export class Tab1Page {
   }
 
   async initStorage() {
-    await this.storage.create();
+    // await this.storage.create();
     this.loadSessionsFromStorage();
   }
 
@@ -42,14 +42,18 @@ export class Tab1Page {
 
     modal.onDidDismiss().then((data) => {
       if (data.data) {
-        const newSession = { name: data.data.name, expanded: false, exercises: data.data.exercises };
+        const newSession = { date: new Date(), name: data.data.name, expanded: false, exercises: data.data.exercises };
         this.sessions.push(newSession);
         this.saveSessionToStorage(data.data.name, data.data.exercises);
       }
 
+      console.log(this.sessions,"1")
+
+
       this.loadSessionsFromStorage();
     });
 
+    console.log(this.sessions)
     return await modal.present();
   }
 
@@ -67,6 +71,7 @@ export class Tab1Page {
 
     if (data) {
       this.sessions.push({
+        date: new Date(),
         name: sessionName,
         expanded: false,
         exercises: data.exercises
@@ -74,10 +79,13 @@ export class Tab1Page {
     }
   }
 
-  async saveSessionToStorage(sessionName: string, exercises: { name: string; checked: boolean }[]) {
+  async saveSessionToStorage(sessionName: string, exercises: Exercise[]) {
     const exerciseData = {
+
       exercises: exercises,
     };
+
+    console.log({exerciseData, sessionName})
 
     await this.storage.set(sessionName, exerciseData);
   }
@@ -86,17 +94,17 @@ export class Tab1Page {
     session.expanded = !session.expanded;
   }
 
-  markExerciseComplete(session: { exercises: { name: string; checked: boolean }[] }, exercise: { name: string; checked: boolean }) {
+  markExerciseComplete(session: { exercises: Exercise[] }, exercise: Exercise) {
     exercise.checked = exercise.checked;   
 
     if (this.areAllExercisesCompleted(session)) {
         this.confirmSessionCompletion(session);
     }
-    
+
     this.saveSessionsToStorage();
   }
 
-  async editSession(session: { name: string; exercises: { name: string; checked: boolean }[] }) {
+  async editSession(session: { name: string; exercises: Exercise[] }) {
     const modal = await this.modalCtrl.create({
       component: SessionModalPage,
       componentProps: {
@@ -116,7 +124,7 @@ export class Tab1Page {
     return await modal.present();
   }
 
-  async removeSession(session: { name: string; expanded: boolean; exercises: { name: string; checked: boolean; }[] }) {
+  async removeSession(session: { date: Date, name: string; expanded: boolean; exercises: Exercise[] }) {
     const index = this.sessions.indexOf(session);
     if (index !== -1) {
       this.sessions.splice(index, 1);
