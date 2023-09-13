@@ -1,5 +1,5 @@
-import { Component, Injectable } from '@angular/core';
-import { IonicModule, ModalController } from '@ionic/angular';
+import { Component } from '@angular/core';
+import { AlertController, IonicModule, ModalController } from '@ionic/angular';
 import { SessionModalPage } from './modal/tab1-modal.page';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -20,8 +20,9 @@ import { Storage } from '@ionic/storage-angular';
 
 export class Tab1Page {
   sessions: { name: string; expanded: boolean; exercises: { name: string; checked: boolean }[] }[] = [];
+  
 
-  constructor(private modalCtrl: ModalController, private storage: Storage) {
+  constructor(private modalCtrl: ModalController, private storage: Storage, private alertController: AlertController) {
     this.initStorage();
   }
 
@@ -85,9 +86,13 @@ export class Tab1Page {
     session.expanded = !session.expanded;
   }
 
-  markExerciseComplete(exercise: { name: string, checked: boolean }) {
-    exercise.checked = exercise.checked;
-    exercise.name = exercise.name;
+  markExerciseComplete(session: { exercises: { name: string; checked: boolean }[] }, exercise: { name: string; checked: boolean }) {
+    exercise.checked = exercise.checked;   
+
+    if (this.areAllExercisesCompleted(session)) {
+        this.confirmSessionCompletion(session);
+    }
+    
     this.saveSessionsToStorage();
   }
 
@@ -123,5 +128,39 @@ export class Tab1Page {
     for (const session of this.sessions) {
       await this.saveSessionToStorage(session.name, session.exercises);
     }
+  }
+
+  areAllExercisesCompleted(session: { exercises: { name: string; checked: boolean }[] }): boolean {
+    return session.exercises.every(exercise => exercise.checked);
+  }
+
+  async confirmSessionCompletion(session: { exercises: { name: string; checked: boolean }[] }): Promise<void> {
+    const alert = await this.alertController.create({
+      header: 'Deseja finalizar a sessão de treino?',
+      buttons: [
+        {
+          text: 'Sim',
+          handler: () => {
+            session.exercises.forEach(exercise => (exercise.checked = false));
+            this.saveSessionsToStorage();
+            this.loadSessionsFromStorage();
+
+            //Pessoal da frequencia pode usar esse trecho do codigo pra chamar os metodos do calendario.
+          },
+        },
+        {
+          text: 'Não',
+          handler: () => {
+            if (session.exercises.length > 0) {
+              const lastExercise = session.exercises[session.exercises.length - 1];
+              lastExercise.checked = false;
+              this.saveSessionsToStorage();
+              this.loadSessionsFromStorage();
+            }
+          },
+        },        
+      ],
+    });
+    await alert.present();
   }
 }

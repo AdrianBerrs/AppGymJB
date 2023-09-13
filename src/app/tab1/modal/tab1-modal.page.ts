@@ -60,6 +60,9 @@ export class SessionModalPage {
     if (this.exercises.length === 0) {
       this.isModalEmpty = true;
     }
+    else {
+      this.isModalEmpty = false;
+    }
   }
 
   checkModalEmpty() {
