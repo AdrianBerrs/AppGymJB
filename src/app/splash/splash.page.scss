@@ -8,21 +8,58 @@
     width: 200px;
     margin: auto;
     margin-top: 70vh;
+
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
 ion-label{
   text-align: center;
   position: absolute;
 }
-  
+ 
   .label1{
+  top: 10%;
+  font-size: 20px;
+  font-weight: bold;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  }
+
+  .label2{
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
   }
   
-  .label2{
+  .label3{
     top: 70%;
-    left: 40%;
-    transform: translate(-30%, -30%);
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+  }
+
+  ion-content {
+    --background: rgba(1, 1, 1, 0.8);
+    
+    body {
+      background: url(../../assets/img/bgsplash.jpg) no-repeat center/cover fixed;
+    }
+
+  }
+ 
+  .imglogo{
+
+    position: relative;
+    height: 200px;
+    width: 200px;
+    margin: auto;
+    border-radius: 50%;
+
+    top: -53%;
+    left: 18%;
+    transform: translate(-50%, -50%);
+
   }
