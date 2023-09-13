@@ -2,10 +2,10 @@
   <ion-toolbar color="primary">
     <ion-title>
       Inserir Nova Avaliação
-      <ion-icon name="bar-chart-outline"></ion-icon>
     </ion-title>
   </ion-toolbar>
 </ion-header>
+
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
@@ -69,10 +69,7 @@
 <ion-item>
   <ion-input label="LBM: " type="number" placeholder="" [(ngModel)] = "avaliacao.lbm" placeholder="" id="lbm" name="lbm"></ion-input>  
 </ion-item>
-<ion-item>
-<ion-buttons [collapse]="true" slot="end" (click)="criaAvaliacao()">
-  <ion-button>Concluir</ion-button>
-</ion-buttons> 
-</ion-item>
-</ion-content>
-
+<ion-footer>
+  <ion-button color="primary" expand="full" >Registrar Avaliação</ion-button>
+<ion-footer>
+<ion-content>
