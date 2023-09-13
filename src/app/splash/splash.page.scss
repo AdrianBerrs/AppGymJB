@@ -3,13 +3,12 @@
     --color: rgb(14, 14, 14);  
     --border-radius: 12px;
     
-    position: relative;
+    position: absolute;
     height: 40px;
     width: 200px;
-    margin: auto;
-    margin-top: 70vh;
+    margin: 0 auto;
 
-    top: 10%;
+    top: 90%;
     left: 50%;
     transform: translate(-50%, -50%);
   }
@@ -21,7 +20,7 @@ ion-label{
  
   .label1{
   top: 10%;
-  font-size: 20px;
+  font-size: 30px;
   font-weight: bold;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -41,25 +40,23 @@ ion-label{
     white-space: nowrap;
   }
 
-  ion-content {
+  ion-content{
     --background: rgba(1, 1, 1, 0.8);
     
     body {
       background: url(../../assets/img/bgsplash.jpg) no-repeat center/cover fixed;
     }
-
   }
  
-  .imglogo{
-
-    position: relative;
+  img {
+    position: absolute;
     height: 200px;
     width: 200px;
-    margin: auto;
+    margin: 0 auto;
     border-radius: 50%;
 
-    top: -53%;
-    left: 18%;
+    top: 25%;
+    left: 50%;
     transform: translate(-50%, -50%);
-
   }
+
