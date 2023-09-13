@@ -27,6 +27,11 @@ export const routes: Routes = [
           import('../tab4/tab4.page').then((m) => m.Tab4Page),
       },
       {
+        path: 'splash',
+        loadComponent: () =>
+          import('../splash/splash.page').then((m) => m.Splashpage),
+      },
+      {
         path: '',
         redirectTo: '/tabs/tab1',
         pathMatch: 'full',
