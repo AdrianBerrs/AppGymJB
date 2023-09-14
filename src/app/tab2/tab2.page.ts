@@ -1,8 +1,8 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
-import { AvaliacoesService } from '../avaliacoes.service';
 import { StorageService } from '../storage.service';
+import { Session } from '../tab1/types';
 
 @Component({
   selector: 'app-tab2',
@@ -12,53 +12,31 @@ import { StorageService } from '../storage.service';
   imports: [IonicModule, ExploreContainerComponent],
 })
 export class Tab2Page {
-  allWorkouts !: any;
   selectedDays: string[] = [];
-  workouts: string[] = [];
-  currentDate: string = ''; 
-  showDatetime: boolean = false; 
+  sessions: Session[] = [];
 
-  constructor(private api : AvaliacoesService, private storage: StorageService) {}
+  constructor(private storage: StorageService) {
+  }
 
   async ngOnInit(): Promise<void> {
     await this.loadWorkouts();
-    this.updateComponent()
   }
-
-
-  async loadWorkouts(){
-    this.selectedDays = []
-    this.workouts = await new Promise((resolve) => {
-      this.api.getWorkouts().subscribe(workouts=>{
-        console.log({workouts})
-        workouts.map((workout: any) => {
-          this.selectedDays.push(workout.date)
-        })
-        resolve(this.selectedDays)
-      })
-    })
-
-  }
-
 
   async ionViewDidEnter() {
-    this.updateComponent()
-    const keys = await this.storage.keys()
-    keys.map(async (key) => {
-      const data = await this.storage.get(key)
-      console.log({data})
-    })
-    console.log({keys})
+    await this.loadWorkouts();
   }
 
-  updateComponent() {
-    this.selectedDays = this.workouts
+  async loadWorkouts(){
+    this.sessions = await this.storage.getAllSessionByUser();
+    
+    this.selectedDays = this.sessions
+      .map((session: Session): string => this.formatDateToISO(session?.date) ?? '')
+      .filter((date) => !!date)
+
+    console.log(this.selectedDays)
   }
 
-  onDaysChanged(event: any) {
-    event.preventDefault()
-    console.log("values:", event.detail.value)
-    this.updateComponent()
+  formatDateToISO(date: Date): string {
+    return date.toISOString()
   }
-
 }
