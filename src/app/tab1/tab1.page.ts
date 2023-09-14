@@ -23,16 +23,11 @@ export class Tab1Page {
   
 
   constructor(private modalCtrl: ModalController, private storage: StorageService, private alertController: AlertController) {
-    this.initStorage();
+    this.loadSessionsFromStorage();
   }
 
   async ionViewDidEnter() {
     await this.loadSessionsFromStorage();
-  }
-
-  async initStorage() {
-    // await this.storage.create();
-    this.loadSessionsFromStorage();
   }
 
   async openSessionModal() {
@@ -47,9 +42,6 @@ export class Tab1Page {
         this.saveSessionToStorage(data.data.name, data.data.exercises);
       }
 
-      console.log(this.sessions,"1")
-
-
       this.loadSessionsFromStorage();
     });
 
@@ -62,7 +54,9 @@ export class Tab1Page {
     const keys = await this.storage.keys();
 
     for (const key of keys) {
-      await this.loadSessionFromStorage(key);
+      if (key.includes("session")) {
+        await this.loadSessionFromStorage(key);
+      }   
     }
   }
 
@@ -72,7 +66,7 @@ export class Tab1Page {
     if (data) {
       this.sessions.push({
         date: new Date(),
-        name: sessionName,
+        name: sessionName.replace("session", ""),
         expanded: false,
         exercises: data.exercises
       });
@@ -87,7 +81,7 @@ export class Tab1Page {
 
     console.log({exerciseData, sessionName})
 
-    await this.storage.set(sessionName, exerciseData);
+    await this.storage.set("session" + sessionName, exerciseData);
   }
 
   expandSession(session: { expanded: boolean }) {
@@ -128,7 +122,7 @@ export class Tab1Page {
     const index = this.sessions.indexOf(session);
     if (index !== -1) {
       this.sessions.splice(index, 1);
-      await this.storage.remove(session.name);
+      await this.storage.remove("session" + session.name);
     }
   }
 

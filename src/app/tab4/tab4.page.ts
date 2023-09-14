@@ -1,10 +1,8 @@
 import { Component, Injectable } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ToastController } from '@ionic/angular';
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
-import { AvaliacoesService} from '../avaliacoes.service';
 import { FormsModule } from '@angular/forms';
-import { Storage } from '@ionic/storage-angular';
-
+import { StorageService } from '../storage.service';
 @Component({
   selector: 'app-tab4',
   templateUrl: 'tab4.page.html',
@@ -14,38 +12,66 @@ import { Storage } from '@ionic/storage-angular';
     IonicModule,
     ExploreContainerComponent,
     FormsModule,
-  ],
-  providers: [Storage]
+  ]
 })
 
 export class Tab4Page {
-  avaliacao = 
-  { 
-    data: '', 
-    idade: '', 
-    peso: '', 
-    altura: '', 
-    gordura: '', 
-    pesoGordura: '', 
-    massaMagra: '', 
-    pesoMassaMagra: '', 
-    massaMuscular: '', 
-    pesoMassaMuscular: '', 
-    agua: '', 
-    teorAgua: '', 
-    gorduraV: '', 
-    pesoOssos: '', 
-    metabolismo: '', 
-    proteina: '', 
-    obesidade: '', 
-    idadeCorpo: '', 
-    lbm: '' 
-  }
-  
-  constructor(private api : AvaliacoesService) {}
+  avaliacao = {
+    data: '',
+    nome: '',
+    idade: '',
+    peso: '',
+    altura: '',
+    gordura: '',
+    pesoGordura: '',
+    massaMagra: '',
+    pesoMassaMagra: '',
+    massaMuscular: '',
+    pesoMassaMuscular: '',
+    agua: '',
+    teorAgua: '',
+    gorduraV: '',
+    pesoOssos: '',
+    metabolismo: '',
+    proteina: '',
+    obesidade: '',
+    idadeCorpo: '',
+    lbm: '',
+  };
 
-  criaAvaliacao(){
-    console.log("idade: "+this.avaliacao.idade)
-    this.api.createData(this.avaliacao)
-  } 
+  constructor(private storage: StorageService, private toastController: ToastController) {}
+
+  async criaAvaliacao() {
+    await this.storage.set("avaliacao" + this.avaliacao.nome, this.avaliacao);
+
+    this.avaliacao = {
+      data: '',
+      nome: '',
+      idade: '',
+      peso: '',
+      altura: '',
+      gordura: '',
+      pesoGordura: '',
+      massaMagra: '',
+      pesoMassaMagra: '',
+      massaMuscular: '',
+      pesoMassaMuscular: '',
+      agua: '',
+      teorAgua: '',
+      gorduraV: '',
+      pesoOssos: '',
+      metabolismo: '',
+      proteina: '',
+      obesidade: '',
+      idadeCorpo: '',
+      lbm: '',
+    };
+
+    const toast = await this.toastController.create({
+      message: 'Avaliação cadastrada com sucesso!',
+      duration: 1000,
+      position: 'bottom',
+    });
+    await toast.present();
+  }
 }

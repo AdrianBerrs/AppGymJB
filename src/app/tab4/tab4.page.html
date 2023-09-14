@@ -12,6 +12,9 @@
       <ion-title size="large">Avaliação</ion-title>
     </ion-toolbar>   
   </ion-header>
+<ion-item>
+  <ion-input label="Nome: " type="string" placeholder="" [(ngModel)] = "avaliacao.nome" placeholder="" id="nome" name="nome" ></ion-input>
+</ion-item>
 <ion-item >
   <ion-input label="Data: " type="date" placeholder="" [(ngModel)] = "avaliacao.data" placeholder="" id="data" name="data" ></ion-input>
 </ion-item>
@@ -70,6 +73,6 @@
   <ion-input label="LBM: " type="number" placeholder="" [(ngModel)] = "avaliacao.lbm" placeholder="" id="lbm" name="lbm"></ion-input>  
 </ion-item>
 <ion-footer>
-  <ion-button color="primary" expand="full" >Registrar Avaliação</ion-button>
-<ion-footer>
-<ion-content>
+  <ion-button color="primary" expand="full" (click)="criaAvaliacao()">Registrar Avaliação</ion-button>
+</ion-footer>
+</ion-content>

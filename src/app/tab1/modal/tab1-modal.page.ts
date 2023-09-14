@@ -71,7 +71,7 @@ export class SessionModalPage {
 
   saveSession() {
     if (this.sessionName.trim() !== '' && this.exercises.length > 0) {
-      this.storage.set(this.sessionName, { exercises: this.exercises });
+      this.storage.set("session" + this.sessionName, { exercises: this.exercises });
     }
     
     this.closeModal();

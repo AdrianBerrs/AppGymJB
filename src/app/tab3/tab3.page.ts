@@ -1,62 +1,59 @@
 import { Component } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ToastController } from '@ionic/angular';
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
-import { AvaliacoesService} from '../avaliacoes.service';
 import { HttpClientModule } from '@angular/common/http';
 import { NgFor } from '@angular/common';
+import { StorageService } from '../storage.service';
 
 @Component({
   selector: 'app-tab3',
   templateUrl: 'tab3.page.html',
   styleUrls: ['tab3.page.scss'],
   standalone: true,
-  imports: [IonicModule, ExploreContainerComponent, HttpClientModule,NgFor],
+  imports: [
+    IonicModule, 
+    ExploreContainerComponent,
+    HttpClientModule,
+    NgFor
+  ],
 })
 
 export class Tab3Page {
-  constructor(private api : AvaliacoesService) {}
-  todasavaliacoes !: any;
+  todasavaliacoes: any = [];
 
-  avaliacao = 
-  { 
-    idade: '', 
-    peso: '', 
-    altura: '', 
-    gordura: '', 
-    pesoGordura: '', 
-    massaMagra: '', 
-    pesoMassaMagra: '', 
-    massaMuscular: '', 
-    pesoMassaMuscular: '', 
-    agua: '', 
-    teorAgua: '', 
-    gorduraV: '', 
-    pesoOssos: '', 
-    metabolismo: '', 
-    proteina: '', 
-    obesidade: '', 
-    dadeCorpo: '', 
-    lbm: ''
+  constructor(private storage: StorageService, private toastController: ToastController) {
+    this.loadAvaliacoesFromStorage()
   }
 
-  carregaAvaliacao(){
-    this.api.readData().subscribe(res=>{
-      this.todasavaliacoes = res;
-    })
-  }
-  ngOnInit(): void {
-    this.carregaAvaliacao();
+  async loadAvaliacoesFromStorage() {
+    this.todasavaliacoes = [];
+    const keys = await this.storage.keys();
+
+    for (const key of keys) {
+      if (key.includes("avaliacao")) {
+        await this.loadAvaliacaoFromStorage(key);
+      }
+    }
   }
 
-  handleRefresh(event: any) {
-    setTimeout(() => {
-      this.carregaAvaliacao();
-      event.target.complete();
-    }, 2000);
+  ionViewDidEnter() {
+    this.loadAvaliacoesFromStorage();
   }
-  deletaAvaliacao(id: any){
-    this.api.deleteData(id).subscribe(res=>{
-      this.carregaAvaliacao();  
-    })
-  }  
+
+  async loadAvaliacaoFromStorage(key: string) {
+    const session = await this.storage.get(key);
+    this.todasavaliacoes.push(session);
+  }
+
+  async deletaAvaliacao(key: string) {
+    await this.storage.remove("avaliacao" + key);
+    this.loadAvaliacoesFromStorage();
+
+    const toast = await this.toastController.create({
+      message: 'Avaliação excluída com sucesso!',
+      duration: 1000,
+      position: 'bottom',
+    });
+    await toast.present();
+  }
 }
