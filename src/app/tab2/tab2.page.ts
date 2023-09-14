@@ -12,7 +12,7 @@ import { Session } from '../tab1/types';
   imports: [IonicModule, ExploreContainerComponent],
 })
 export class Tab2Page {
-  selectedDays: string[] = [];
+  selectedDays?: string[];
   sessions: Session[] = [];
 
   constructor(private storage: StorageService) {
@@ -27,6 +27,8 @@ export class Tab2Page {
   }
 
   async loadWorkouts(){
+    this.selectedDays = undefined
+
     this.sessions = await this.storage.getAllSessionByUser();
     
     this.selectedDays = this.sessions
