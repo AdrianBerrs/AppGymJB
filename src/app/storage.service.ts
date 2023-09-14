@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage-angular';
+import { Session } from './tab1/types';
 
 @Injectable({
   providedIn: 'root',
@@ -38,5 +39,26 @@ export class StorageService {
   keys(): Promise<string[]> {
     return this.storage.keys()
 
+  }
+
+  async getAllSessionByUser(): Promise<Session[]> {
+    const sessions: Session[] = [];
+    const keys = await this.storage.keys();
+
+    for (const key of keys) {
+      const data = await this.storage.get(key);
+      if (!data) {
+        continue
+      }
+      
+      sessions.push({
+        date: new Date(),
+        name: key,
+        expanded: false,
+        exercises: data.exercises
+      });
+
+    }
+    return sessions
   }
 }
