@@ -4,7 +4,7 @@ import { SessionModalPage } from './modal/tab1-modal.page';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { StorageService } from '../storage.service';
-import { Exercise } from './types';
+import { Exercise, Session } from './types';
 
 @Component({
   selector: 'app-tab1',
@@ -19,8 +19,7 @@ import { Exercise } from './types';
 })
 
 export class Tab1Page {
-  sessions: { date: Date, name: string; expanded: boolean; exercises: Exercise[] }[] = [];
-  
+  sessions: Session[] = [];
 
   constructor(private modalCtrl: ModalController, private storage: StorageService, private alertController: AlertController) {
     this.loadSessionsFromStorage();
@@ -37,9 +36,9 @@ export class Tab1Page {
 
     modal.onDidDismiss().then((data) => {
       if (data.data) {
-        const newSession = { date: new Date(), name: data.data.name, expanded: false, exercises: data.data.exercises };
+        const newSession: Session = { date: new Date(), name: data.data.name, expanded: false, exercises: data.data.exercises };
         this.sessions.push(newSession);
-        this.saveSessionToStorage(data.data.name, data.data.exercises);
+        this.saveSessionToStorage(newSession);
       }
 
       this.loadSessionsFromStorage();
@@ -73,22 +72,18 @@ export class Tab1Page {
     }
   }
 
-  async saveSessionToStorage(sessionName: string, exercises: Exercise[]) {
-    const exerciseData = {
+  async saveSessionToStorage(session: Session) {
 
-      exercises: exercises,
-    };
+    console.log({session})
 
-    console.log({exerciseData, sessionName})
-
-    await this.storage.set("session" + sessionName, exerciseData);
+    await this.storage.set("session" + session.name, session);
   }
 
   expandSession(session: { expanded: boolean }) {
     session.expanded = !session.expanded;
   }
 
-  markExerciseComplete(session: { exercises: Exercise[] }, exercise: Exercise) {
+  markExerciseComplete(session: Session, exercise: Exercise) {
     exercise.checked = exercise.checked;   
 
     if (this.areAllExercisesCompleted(session)) {
@@ -98,7 +93,7 @@ export class Tab1Page {
     this.saveSessionsToStorage();
   }
 
-  async editSession(session: { name: string; exercises: Exercise[] }) {
+  async editSession(session: Session) {
     const modal = await this.modalCtrl.create({
       component: SessionModalPage,
       componentProps: {
@@ -111,14 +106,14 @@ export class Tab1Page {
       if (data.data) {
         session.name = data.data.name;
         session.exercises = data.data.exercises;
-        this.saveSessionToStorage(data.data.name, data.data.exercises);
+        this.saveSessionToStorage(session);
       }
     });
 
     return await modal.present();
   }
 
-  async removeSession(session: { date: Date, name: string; expanded: boolean; exercises: Exercise[] }) {
+  async removeSession(session: Session) {
     const index = this.sessions.indexOf(session);
     if (index !== -1) {
       this.sessions.splice(index, 1);
@@ -128,15 +123,15 @@ export class Tab1Page {
 
   async saveSessionsToStorage() {
     for (const session of this.sessions) {
-      await this.saveSessionToStorage(session.name, session.exercises);
+      await this.saveSessionToStorage(session);
     }
   }
 
-  areAllExercisesCompleted(session: { exercises: { name: string; checked: boolean }[] }): boolean {
+  areAllExercisesCompleted(session: Session): boolean {
     return session.exercises.every(exercise => exercise.checked);
   }
 
-  async confirmSessionCompletion(session: { exercises: { name: string; checked: boolean }[] }): Promise<void> {
+  async confirmSessionCompletion(session: Session): Promise<void> {
     const alert = await this.alertController.create({
       header: 'Deseja finalizar a sessão de treino?',
       buttons: [
