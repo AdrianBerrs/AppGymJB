@@ -3,6 +3,8 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
+import { Exercise, Session } from '../types';
+import { StorageService } from 'src/app/storage.service';
 
 @Component({
   selector: 'app-tab1-modal',
@@ -14,22 +16,25 @@ import { Storage } from '@ionic/storage-angular';
     IonicModule,
     FormsModule,
   ],
-  providers: [Storage]
+  providers: [StorageService]
 })
 
 export class SessionModalPage {
+  session: Session
   sessionName: string = '';
-  exercises: { name: string, checked: boolean }[] = [];
+  exercises: Exercise[] = [];
   newExerciseName: string = '';
   isNewExerciseNameEmpty: boolean = true;
   isModalEmpty: boolean = true;
 
-  constructor(private modalCtrl: ModalController, private storage: Storage) {
-    this.initStorage();
-  }
-
-  async initStorage() {
-    await this.storage.create();
+  constructor(private modalCtrl: ModalController, private storage: StorageService) {
+    this.session = {
+      date: new Date(),
+      exercises: [],
+      expanded: false,
+      name: '',
+      _id: ''
+    }
   }
 
   closeModal() {
@@ -69,11 +74,15 @@ export class SessionModalPage {
     this.isModalEmpty = this.sessionName.trim() === '' && this.exercises.length === 0;
   }
 
-  saveSession() {
-    if (this.sessionName.trim() !== '' && this.exercises.length > 0) {
-      this.storage.set("session" + this.sessionName, { exercises: this.exercises });
+  async saveSession() {
+    if (!this.session._id) {
+      const sessionCreated = await this.storage.creaseSession({exercises: this.exercises, date: new Date(), expanded: false, name: this.sessionName})
+      console.log("session created:",{sessionCreated})
+    } else {
+      const sessionUpdated = await this.storage.updateSession(this.session)
+      console.log("session updated:", {sessionUpdated} )
     }
-    
+
     this.closeModal();
   }
 }

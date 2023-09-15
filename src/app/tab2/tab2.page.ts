@@ -32,7 +32,7 @@ export class Tab2Page {
     this.sessions = await this.storage.getAllSessionByUser();
     
     this.selectedDays = this.sessions
-      .map((session: Session): string => this.formatDateToISO(session?.date) ?? '')
+      .map((session: Session): string => this.formatDateToISO(session.date) ?? '')
       .filter((date) => !!date)
 
     console.log(this.selectedDays)

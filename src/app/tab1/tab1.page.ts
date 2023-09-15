@@ -22,7 +22,6 @@ export class Tab1Page {
   sessions: Session[] = [];
 
   constructor(private modalCtrl: ModalController, private storage: StorageService, private alertController: AlertController) {
-    this.loadSessionsFromStorage();
   }
 
   async ionViewDidEnter() {
@@ -35,6 +34,7 @@ export class Tab1Page {
     });
 
     modal.onDidDismiss().then((data) => {
+      console.log({data})
       if (data.data) {
         const newSession: Session = { date: new Date(), name: data.data.name, expanded: false, exercises: data.data.exercises };
         this.sessions.push(newSession);
@@ -49,42 +49,20 @@ export class Tab1Page {
   }
 
   async loadSessionsFromStorage() {
-    this.sessions = [];
-    const keys = await this.storage.keys();
-
-    for (const key of keys) {
-      if (key.includes("session")) {
-        await this.loadSessionFromStorage(key);
-      }   
-    }
-  }
-
-  async loadSessionFromStorage(sessionName: string) {
-    const data = await this.storage.get(sessionName);
-
-    if (data) {
-      this.sessions.push({
-        date: new Date(),
-        name: sessionName.replace("session", ""),
-        expanded: false,
-        exercises: data.exercises
-      });
-    }
+    this.sessions = await this.storage.getAllSessionByUser()
   }
 
   async saveSessionToStorage(session: Session) {
-
-    console.log({session})
-
-    await this.storage.set("session" + session.name, session);
+    await this.storage.updateSession(session);
   }
 
   expandSession(session: { expanded: boolean }) {
     session.expanded = !session.expanded;
   }
 
-  markExerciseComplete(session: Session, exercise: Exercise) {
+  async markExerciseComplete(session: Session, exercise: Exercise) {
     exercise.checked = exercise.checked;   
+    await this.storage.updateExercise(session._id ?? '', exercise)
 
     if (this.areAllExercisesCompleted(session)) {
         this.confirmSessionCompletion(session);
@@ -94,11 +72,16 @@ export class Tab1Page {
   }
 
   async editSession(session: Session) {
+    const sessionToUpdate = await this.storage.getSessionById(session._id ?? '')
+    if (!sessionToUpdate) {
+      return alert("Sessão de treino não existe!")
+    }
     const modal = await this.modalCtrl.create({
       component: SessionModalPage,
       componentProps: {
-        sessionName: session.name,
-        exercises: session.exercises,
+        session: sessionToUpdate,
+        sessionName: sessionToUpdate.name,
+        exercises: sessionToUpdate.exercises,
       },
     });
 
@@ -125,6 +108,10 @@ export class Tab1Page {
     for (const session of this.sessions) {
       await this.saveSessionToStorage(session);
     }
+  }
+
+  doneSession(session: Session): boolean {
+    return this.areAllExercisesCompleted(session)
   }
 
   areAllExercisesCompleted(session: Session): boolean {
