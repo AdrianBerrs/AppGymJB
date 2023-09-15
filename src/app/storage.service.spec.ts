@@ -24,10 +24,12 @@ describe('StorageService', () => {
       ],
     })//.compileComponents();
     service = new StorageService()
+    service.clear()
   });
 
   it('should be created an session with one exercise', async () => {
     const createSessionObj: Session = {
+      date: new Date(),
       exercises: [
         {
           name: "ex1",
@@ -52,6 +54,7 @@ describe('StorageService', () => {
 
   it('should be created an session and update an exercise', async () => {
     const createSessionObj: Session = {
+      date: new Date(),
       exercises: [
         {
           name: "ex1",

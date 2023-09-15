@@ -140,6 +140,11 @@ export class StorageService {
   async getAllSessionByUser(): Promise<Session[]> {
     const sessions = await this.getSessions()
 
+    if (!Array.isArray(sessions)) {
+      this.storage.set("sessions", [])
+      return []
+    }
+
     return sessions.filter((session) => !!session)
   }
 }
