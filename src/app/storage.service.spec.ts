@@ -91,4 +91,46 @@ describe('StorageService', () => {
 
   });
 
+  it('should be created two sessions', async () => {
+    const createSessionObj: Session = {
+      date: new Date(),
+      exercises: [
+        {
+          name: "ex1",
+          checked:false
+        }
+      ],
+      expanded: false,
+      name: "Test session 1",
+    }
+
+    const session = await service.creaseSession(createSessionObj)
+
+    expect(session._id).not.toBeUndefined();
+    const sessions = await service.getAllSessionByUser()
+    expect(sessions.length).toBe(1);
+
+    const foundSession = await service.getSessionById(session._id?.toString() ?? '')
+    expect(foundSession).not.toBeNull();
+
+    expect(foundSession?.exercises.length).toBe(1);
+    expect(foundSession?.exercises[0].checked).toBe(false);
+
+    if (!foundSession) {
+      throw Error("exit test")
+    }
+
+    const session2 = await service.creaseSession(createSessionObj)
+    expect(session2._id).not.toBeUndefined();
+    const sessions2 = await service.getAllSessionByUser()
+    expect(sessions2.length).toBe(2);
+
+    const foundSession3 = sessions2[0]
+    expect(foundSession3).not.toBeNull();
+
+    expect(foundSession3?.exercises.length).toBe(1);
+    expect(foundSession3?.exercises[0].checked).toBe(false);
+
+  });
+
 });

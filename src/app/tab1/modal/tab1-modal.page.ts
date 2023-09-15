@@ -21,7 +21,6 @@ import { StorageService } from 'src/app/storage.service';
 
 export class SessionModalPage {
   session: Session
-  exercises: Exercise[] = [];
   newExerciseName: string = '';
   isNewExerciseNameEmpty: boolean = true;
   isModalEmpty: boolean = true;
@@ -50,18 +49,24 @@ export class SessionModalPage {
 
   addExercise() {
     if (this.newExerciseName.trim() !== '') {
-      this.exercises.push({ name: this.newExerciseName, checked: false });
+      const newExercise: Exercise = { 
+        name: this.newExerciseName, 
+        checked: false,
+      }
+
+      this.session.exercises.push(newExercise);
       this.newExerciseName = '';
       this.isModalEmpty = false;
     }
+
   }
 
   async removeExercise(index: number, exerciseId?: string) {
-    if (index >= 0 && index < this.exercises.length) {
-      this.exercises.splice(index, 1);
+    if (index >= 0 && index < this.session.exercises.length) {
+      this.session.exercises.splice(index, 1);
     }
 
-    if (this.exercises.length === 0) {
+    if (this.session.exercises.length === 0) {
       this.isModalEmpty = true;
     }
     else {
@@ -72,17 +77,20 @@ export class SessionModalPage {
   }
 
   checkModalEmpty() {
-    this.isModalEmpty = this.session.name.trim() === '' && this.exercises.length === 0;
+    this.isModalEmpty = this.session.name.trim() === '' && this.session.exercises.length === 0;
   }
 
   async saveSession() {
     if (!this.session._id) {
-      const sessionCreated = await this.storage.creaseSession({exercises: this.exercises, date: new Date(), expanded: false, name: this.session.name})
+      const sessionCreated = await this.storage.creaseSession({exercises: this.session.exercises, date: new Date(), expanded: false, name: this.session.name})
       console.log("session created:",{sessionCreated})
     } else {
       const sessionUpdated = await this.storage.updateSession(this.session)
       console.log("session updated:", {sessionUpdated} )
     }
+
+    const sessions = await this.storage.getAllSessionByUser()
+    console.log("sessions:",{sessions})
 
     this.closeModal();
   }

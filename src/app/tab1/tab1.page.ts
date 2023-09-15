@@ -33,15 +33,14 @@ export class Tab1Page {
       component: SessionModalPage,
     });
 
-    modal.onDidDismiss().then((data) => {
+    modal.onDidDismiss().then(async (data) => {
       console.log({data})
       if (data.data) {
         const newSession: Session = { date: new Date(), name: data.data.name, expanded: false, exercises: data.data.exercises };
         this.sessions.push(newSession);
         this.saveSessionToStorage(newSession);
       }
-
-      this.loadSessionsFromStorage();
+      await this.loadSessionsFromStorage();
     });
 
     console.log(this.sessions)
