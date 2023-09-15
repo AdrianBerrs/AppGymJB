@@ -21,7 +21,6 @@ import { StorageService } from 'src/app/storage.service';
 
 export class SessionModalPage {
   session: Session
-  sessionName: string = '';
   exercises: Exercise[] = [];
   newExerciseName: string = '';
   isNewExerciseNameEmpty: boolean = true;
@@ -42,7 +41,7 @@ export class SessionModalPage {
   }
 
   toggleAddIcon() {
-    if (this.newExerciseName.trim() === '' || this.sessionName.trim() === '') {
+    if (this.newExerciseName.trim() === '' || this.session.name.trim() === '') {
       this.isNewExerciseNameEmpty = true;
     } else {
       this.isNewExerciseNameEmpty = false;
@@ -57,7 +56,7 @@ export class SessionModalPage {
     }
   }
 
-  removeExercise(index: number) {
+  async removeExercise(index: number, exerciseId?: string) {
     if (index >= 0 && index < this.exercises.length) {
       this.exercises.splice(index, 1);
     }
@@ -68,15 +67,17 @@ export class SessionModalPage {
     else {
       this.isModalEmpty = false;
     }
+
+    await this.storage.removeExercise(this.session._id ?? '', exerciseId ?? '')
   }
 
   checkModalEmpty() {
-    this.isModalEmpty = this.sessionName.trim() === '' && this.exercises.length === 0;
+    this.isModalEmpty = this.session.name.trim() === '' && this.exercises.length === 0;
   }
 
   async saveSession() {
     if (!this.session._id) {
-      const sessionCreated = await this.storage.creaseSession({exercises: this.exercises, date: new Date(), expanded: false, name: this.sessionName})
+      const sessionCreated = await this.storage.creaseSession({exercises: this.exercises, date: new Date(), expanded: false, name: this.session.name})
       console.log("session created:",{sessionCreated})
     } else {
       const sessionUpdated = await this.storage.updateSession(this.session)

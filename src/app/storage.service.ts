@@ -15,7 +15,6 @@ export class StorageService {
 
   private async initStorage() {
     await this.storage.create();
-    this.initCollections()
   }
   
   async get(key: string): Promise<any> {
@@ -40,18 +39,24 @@ export class StorageService {
   
   keys(): Promise<string[]> {
     return this.storage.keys()
-
-  }
-
-  private initCollections() {
-    // const sessions = this.storage.get("sessions")
-    // if (!Array.isArray(sessions)) {
-    //   this.storage.set("sessions", [])
-    // }
   }
 
   private async getSessions(): Promise<Session[]> {
     return await this.storage.get("sessions")
+  }
+
+  async removeSession(sessionId?: string): Promise<void> {
+    const sessions: Session[] = await this.getAllSessionByUser()
+
+    const sessionsUpdated = sessions.map((session) => {
+      if (session._id?.toString() == sessionId?.toString()) {
+        return false
+      }
+
+      return true
+    })
+
+    this.storage.set("sessions", sessionsUpdated)
   }
 
   async updateSession(sessionToUpdate: Session): Promise<void> {
@@ -89,6 +94,23 @@ export class StorageService {
     await this.updateSession(session)
   }
 
+  async removeExercise(sessionId: string, exerciseId: string): Promise<void> {
+    const session = await this.getSessionById(sessionId)
+    if (!session) {
+      return
+    }
+
+    session.exercises = session?.exercises.filter((exercise) => {
+      if(exercise._id?.toString() ==exerciseId.toString()) {
+        return false
+      }
+
+      return true
+    })
+
+    await this.updateSession(session)
+  }
+
   async creaseSession(session: Session): Promise<Session> {
     if (session._id) {
       throw Error("Session already exists.")
@@ -116,25 +138,8 @@ export class StorageService {
   }
 
   async getAllSessionByUser(): Promise<Session[]> {
-    return await this.getSessions()
-    // const sessions: Session[] = [];
-    // const keys = await this.storage.keys();
+    const sessions = await this.getSessions()
 
-    // for (const key of keys) {
-    //   const data = await this.storage.get(key);
-    //   if (!data) {
-    //     continue
-    //   }
-      
-    //   sessions.push({
-    //     _id: data._id,
-    //     date: data.date,
-    //     name: data.name,
-    //     expanded: data.expanded,
-    //     exercises: data.exercises
-    //   });
-
-    // }
-    // return sessions
+    return sessions.filter((session) => !!session)
   }
 }

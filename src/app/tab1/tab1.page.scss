@@ -20,3 +20,13 @@
 .delete-button {
     float: left;
 }
+
+.session-card-header {
+    display: block;
+}
+
+.done-session-icon {
+    margin-left: 1rem;
+    padding-top: 0.3rem;
+    color: var(--ion-color-primary, #3880ff)
+  }

@@ -9,8 +9,9 @@
   <!-- Lista de sessões -->
   <ion-list>
     <ion-card *ngFor="let session of sessions">
-      <ion-card-header (click)="expandSession(session)">
-        <ion-icon name="caret-forward" *ngIf="!session.expanded"></ion-icon>
+      <ion-icon name="checkbox" *ngIf="doneSession(session)" class="done-session-icon"></ion-icon>
+      <ion-card-header (click)="expandSession(session)" class="session-card-header">
+        <ion-icon name="caret-forward" *ngIf="!session.expanded" ></ion-icon>
         <ion-icon name="caret-down" *ngIf="session.expanded"></ion-icon>
         {{ session.name }}
       </ion-card-header>

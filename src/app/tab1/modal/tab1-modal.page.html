@@ -17,7 +17,7 @@
   <ion-list>
     <ion-item *ngFor="let exercise of session?.exercises; let i = index">
       <ion-label>{{ exercise.name }}</ion-label>
-      <ion-icon name="trash-outline" slot="end" (click)="removeExercise(i)" color="danger"></ion-icon>
+      <ion-icon name="trash-outline" slot="end" (click)="removeExercise(i, exercise?._id)" color="danger"></ion-icon>
     </ion-item>
   </ion-list>
 

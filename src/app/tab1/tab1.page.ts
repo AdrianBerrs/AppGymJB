@@ -50,6 +50,7 @@ export class Tab1Page {
 
   async loadSessionsFromStorage() {
     this.sessions = await this.storage.getAllSessionByUser()
+    console.log({sessions: this.sessions})
   }
 
   async saveSessionToStorage(session: Session) {
@@ -57,16 +58,18 @@ export class Tab1Page {
   }
 
   expandSession(session: { expanded: boolean }) {
+    if (!session) {
+      return
+    }
     session.expanded = !session.expanded;
   }
 
   async markExerciseComplete(session: Session, exercise: Exercise) {
-    exercise.checked = exercise.checked;   
-    await this.storage.updateExercise(session._id ?? '', exercise)
-
-    if (this.areAllExercisesCompleted(session)) {
-        this.confirmSessionCompletion(session);
+    if (!this.areAllExercisesCompleted(session)) {
+      return
     }
+    
+    this.confirmSessionCompletion(session, exercise);
 
     this.saveSessionsToStorage();
   }
@@ -102,6 +105,8 @@ export class Tab1Page {
       this.sessions.splice(index, 1);
       await this.storage.remove("session" + session.name);
     }
+
+    await this.storage.removeSession(session._id)
   }
 
   async saveSessionsToStorage() {
@@ -115,21 +120,23 @@ export class Tab1Page {
   }
 
   areAllExercisesCompleted(session: Session): boolean {
+    if (!session?.exercises) {
+      return false
+    }
     return session.exercises.every(exercise => exercise.checked);
   }
 
-  async confirmSessionCompletion(session: Session): Promise<void> {
+  async confirmSessionCompletion(session: Session, exercise: Exercise): Promise<void> {
     const alert = await this.alertController.create({
       header: 'Deseja finalizar a sessão de treino?',
       buttons: [
         {
           text: 'Sim',
-          handler: () => {
-            session.exercises.forEach(exercise => (exercise.checked = false));
+          handler: async () => {
+            exercise.checked = true;   
+            await this.storage.updateExercise(session._id ?? '', exercise)
             this.saveSessionsToStorage();
             this.loadSessionsFromStorage();
-
-            //Pessoal da frequencia pode usar esse trecho do codigo pra chamar os metodos do calendario.
           },
         },
         {
