@@ -22,7 +22,6 @@ export class Tab1Page {
   sessions: Session[] = [];
 
   constructor(private modalCtrl: ModalController, private storage: StorageService, private alertController: AlertController) {
-    this.loadSessionsFromStorage();
   }
 
   async ionViewDidEnter() {
@@ -35,6 +34,7 @@ export class Tab1Page {
     });
 
     modal.onDidDismiss().then((data) => {
+      console.log({data})
       if (data.data) {
         const newSession: Session = { date: new Date(), name: data.data.name, expanded: false, exercises: data.data.exercises };
         this.sessions.push(newSession);
@@ -49,56 +49,42 @@ export class Tab1Page {
   }
 
   async loadSessionsFromStorage() {
-    this.sessions = [];
-    const keys = await this.storage.keys();
-
-    for (const key of keys) {
-      if (key.includes("session")) {
-        await this.loadSessionFromStorage(key);
-      }   
-    }
-  }
-
-  async loadSessionFromStorage(sessionName: string) {
-    const data = await this.storage.get(sessionName);
-
-    if (data) {
-      this.sessions.push({
-        date: new Date(),
-        name: sessionName.replace("session", ""),
-        expanded: false,
-        exercises: data.exercises
-      });
-    }
+    this.sessions = await this.storage.getAllSessionByUser()
+    console.log({sessions: this.sessions})
   }
 
   async saveSessionToStorage(session: Session) {
-
-    console.log({session})
-
-    await this.storage.set("session" + session.name, session);
+    await this.storage.updateSession(session);
   }
 
   expandSession(session: { expanded: boolean }) {
+    if (!session) {
+      return
+    }
     session.expanded = !session.expanded;
   }
 
-  markExerciseComplete(session: Session, exercise: Exercise) {
-    exercise.checked = exercise.checked;   
-
-    if (this.areAllExercisesCompleted(session)) {
-        this.confirmSessionCompletion(session);
+  async markExerciseComplete(session: Session, exercise: Exercise) {
+    if (!this.areAllExercisesCompleted(session)) {
+      return
     }
+    
+    this.confirmSessionCompletion(session, exercise);
 
     this.saveSessionsToStorage();
   }
 
   async editSession(session: Session) {
+    const sessionToUpdate = await this.storage.getSessionById(session._id ?? '')
+    if (!sessionToUpdate) {
+      return alert("Sessão de treino não existe!")
+    }
     const modal = await this.modalCtrl.create({
       component: SessionModalPage,
       componentProps: {
-        sessionName: session.name,
-        exercises: session.exercises,
+        session: sessionToUpdate,
+        sessionName: sessionToUpdate.name,
+        exercises: sessionToUpdate.exercises,
       },
     });
 
@@ -119,6 +105,8 @@ export class Tab1Page {
       this.sessions.splice(index, 1);
       await this.storage.remove("session" + session.name);
     }
+
+    await this.storage.removeSession(session._id)
   }
 
   async saveSessionsToStorage() {
@@ -127,22 +115,28 @@ export class Tab1Page {
     }
   }
 
+  doneSession(session: Session): boolean {
+    return this.areAllExercisesCompleted(session)
+  }
+
   areAllExercisesCompleted(session: Session): boolean {
+    if (!session?.exercises) {
+      return false
+    }
     return session.exercises.every(exercise => exercise.checked);
   }
 
-  async confirmSessionCompletion(session: Session): Promise<void> {
+  async confirmSessionCompletion(session: Session, exercise: Exercise): Promise<void> {
     const alert = await this.alertController.create({
       header: 'Deseja finalizar a sessão de treino?',
       buttons: [
         {
           text: 'Sim',
-          handler: () => {
-            session.exercises.forEach(exercise => (exercise.checked = false));
+          handler: async () => {
+            exercise.checked = true;   
+            await this.storage.updateExercise(session._id ?? '', exercise)
             this.saveSessionsToStorage();
             this.loadSessionsFromStorage();
-
-            //Pessoal da frequencia pode usar esse trecho do codigo pra chamar os metodos do calendario.
           },
         },
         {
