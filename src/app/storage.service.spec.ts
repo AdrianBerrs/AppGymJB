@@ -17,12 +17,12 @@ describe('StorageService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [BrowserModule], // Importe o BrowserModule aqui
+      imports: [BrowserModule],
 
       declarations: [
         StorageService
       ],
-    })//.compileComponents();
+    })
     service = new StorageService()
     service.clear()
   });
