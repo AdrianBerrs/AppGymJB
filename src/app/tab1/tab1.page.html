@@ -5,7 +5,6 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-toolbar color="primary"></ion-toolbar>
 
   <!-- Lista de sessões -->
   <ion-list>
@@ -17,7 +16,7 @@
       </ion-card-header>
     
       <!-- Adicionar botões de edição e exclusão à direita -->
-      <ion-button *ngIf= "!session.expanded" fill="clear" color="primary" class="edit-button" (click)="editSession(session)">
+      <ion-button *ngIf= "!session.expanded" fill="clear" color="secondary" class="edit-button" (click)="editSession(session)">
         <ion-icon  name="create"></ion-icon>
       </ion-button>
       <ion-button *ngIf= "!session.expanded" fill="clear" color="danger" class="delete-button" (click)="removeSession(session)">

@@ -1,9 +1,6 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="primary">
-    <ion-title>
-      Avaliações Concluídas
-      <ion-icon name="bar-chart-outline"></ion-icon>
-    </ion-title>
+    <ion-title>Avaliações Concluídas</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -29,7 +26,7 @@
         <br><b>Metabolismo:</b> {{row.metabolismo}}Kgs | <b>Proteína:</b> {{row.proteina}}Kgs
         <br><b>Obesidade:</b> {{row.obesidade}} | <b>Idade do Corpo:</b> {{row.idadeCorpo}} Anos | <b>LBM:</b> {{row.lbm}}
       </ion-card-content>
-      <ion-button fill="clear" (click)="deletaAvaliacao(row.nome)">Deletar</ion-button>
+      <ion-button fill="clear" color="danger" (click)="deletaAvaliacao(row.nome)">Deletar</ion-button>
     </ion-card>
   </ion-content>
 </ion-content>
