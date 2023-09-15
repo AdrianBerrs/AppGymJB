@@ -48,7 +48,7 @@ export class StorageService {
   async removeSession(sessionId?: string): Promise<void> {
     const sessions: Session[] = await this.getAllSessionByUser()
 
-    const sessionsUpdated = sessions.map((session) => {
+    const sessionsUpdated = sessions.filter((session) => {
       if (session._id?.toString() == sessionId?.toString()) {
         return false
       }
@@ -59,10 +59,10 @@ export class StorageService {
     this.storage.set("sessions", sessionsUpdated)
   }
 
-  async updateSession(sessionToUpdate: Session): Promise<void> {
+  async updateSession(sessionToUpdate: Session, newReccord?: boolean): Promise<void> {
     const sessions: Session[] = await this.getAllSessionByUser()
 
-    if (sessions.length == 0) {
+    if (sessions.length == 0 || newReccord) {
       sessions.push(sessionToUpdate)
     }
 
@@ -74,7 +74,9 @@ export class StorageService {
       return session
     })
 
-    this.storage.set("sessions", sessionsUpdated)
+    const onlySessions = sessionsUpdated.filter((sess) => (!!sess._id))
+
+    this.storage.set("sessions", onlySessions)
   }
 
   async updateExercise(sessionId: string, exerciseToUpdate: Exercise): Promise<void> {
@@ -111,11 +113,7 @@ export class StorageService {
     await this.updateSession(session)
   }
 
-  async creaseSession(session: Session): Promise<Session> {
-    if (session._id) {
-      throw Error("Session already exists.")
-    }
-    
+  async creaseSession(session: Session): Promise<Session> {    
     session._id = uuidv4()
     session.date = new Date()
 
@@ -126,7 +124,7 @@ export class StorageService {
       return exercise
     })
 
-    await this.updateSession(session)
+    await this.updateSession(session, true)
 
     return session
   }
